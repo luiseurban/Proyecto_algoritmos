@@ -80,17 +80,64 @@ document.addEventListener('DOMContentLoaded', () => {
     // Respect user's chart type selection
     const chartTypeSel = document.getElementById('chartType');
     const chartType = chartTypeSel ? chartTypeSel.value : 'bar';
-    let chartConfigType = chartType === 'horizontal' ? 'bar' : chartType;
+    
+    let chartConfigType = chartType;
     let chartOptions = { responsive: true, scales: { y: { beginAtZero: true } } };
+    let chartLabels = labels;
+    let chartDatasets = [];
 
-    let chartDatasets = datasets;
+    // Configure based on type
     if (chartType === 'horizontal') {
+      chartConfigType = 'bar';
       chartOptions.indexAxis = 'y';
+      chartDatasets = datasets;
+    } else if (['pie', 'doughnut', 'polarArea'].includes(chartType)) {
+      // For circular charts, we show the MEAN time of each algorithm
+      chartLabels = ['Fuerza bruta', 'Eficiente'];
+      // Remove scales for pie/doughnut/polar (mostly) or adjust them
+      if (chartType !== 'polarArea') {
+        delete chartOptions.scales;
+      } else {
+        // Polar area usually has a radial scale, but we can leave default or customize
+        chartOptions.scales = { r: { beginAtZero: true } };
+      }
+      
+      chartDatasets = [{
+        label: 'Tiempo medio (ms)',
+        data: [parseFloat(bfMean), parseFloat(efMean)],
+        backgroundColor: [
+          'rgba(220,50,50,0.6)',
+          'rgba(50,120,220,0.6)'
+        ],
+        borderColor: [
+          'rgba(220,50,50,1)',
+          'rgba(50,120,220,1)'
+        ],
+        borderWidth: 1
+      }];
+    } else if (chartType === 'radar') {
+      chartOptions = {
+        responsive: true,
+        scales: {
+          r: {
+            beginAtZero: true
+          }
+        }
+      };
+      chartDatasets = datasets.map(ds => ({
+        ...ds,
+        fill: true,
+        backgroundColor: ds.label.includes('Fuerza') ? 'rgba(220,50,50,0.2)' : 'rgba(50,120,220,0.2)',
+        borderColor: ds.label.includes('Fuerza') ? 'rgba(220,50,50,1)' : 'rgba(50,120,220,1)',
+      }));
+    } else {
+      // Bar, Line
+      chartDatasets = datasets;
     }
 
     chart = new Chart(ctx, {
       type: chartConfigType,
-      data: { labels, datasets: chartDatasets },
+      data: { labels: chartLabels, datasets: chartDatasets },
       options: chartOptions
     });
 

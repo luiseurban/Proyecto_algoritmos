@@ -27,7 +27,7 @@ def run_bench():
     max_len = int(data.get('max_len', 5))
     alphabet = data.get('alphabet', 'ACGT')
     L = int(data.get('L', 4))
-    repeats = int(data.get('repeats', 1))
+    repeats = int(data.get('repeats', 3))
     seed = data.get('seed')
 
     rng = random.Random()
