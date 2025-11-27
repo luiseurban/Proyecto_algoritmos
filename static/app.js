@@ -87,15 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (chartType === 'horizontal') {
       chartOptions.indexAxis = 'y';
     }
-    if (chartType === 'line') {
-      // For line charts, use borderColor and no fill
-      chartDatasets = datasets.map(ds => ({
-        ...ds,
-        fill: false,
-        borderColor: ds.backgroundColor || 'rgba(0,0,0,0.6)',
-        backgroundColor: ds.backgroundColor || 'rgba(0,0,0,0.2)',
-      }));
-    }
 
     chart = new Chart(ctx, {
       type: chartConfigType,
