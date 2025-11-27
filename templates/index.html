@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Comparador de Algoritmos - Cadena Media</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 20px; }
+      label { display:block; margin-top:8px }
+      .row { display:flex; gap:12px; align-items:center }
+      .chart-wrap { width:700px; max-width:100% }
+      pre { background:#f6f6f6; padding:10px }
+    </style>
+  </head>
+  <body>
+    <h2>Comparador: Algoritmo Ingenuo vs Eficiente</h2>
+
+    <form id="bench-form">
+      <div class="row">
+        <label>Número de cadenas: <input type="number" id="n" value="6" min="1" /></label>
+        <label>Longitud máxima: <input type="number" id="max_len" value="5" min="1" /></label>
+        <label>Alfabeto: <input type="text" id="alphabet" value="ACGT" /></label>
+        <label>L (fuerza bruta): <input type="number" id="L" value="4" min="1" /></label>
+        <label>Repeticiones: <input type="number" id="repeats" value="1" min="1" /></label>
+      </div>
+      <div style="margin-top:12px">
+        <button type="submit">Ejecutar benchmark</button>
+      </div>
+    </form>
+
+    <h3>Resultados</h3>
+    <div id="summary"></div>
+    <div class="chart-wrap"><canvas id="timeChart"></canvas></div>
+
+    <h4>Dataset usado</h4>
+    <pre id="dataset"></pre>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
