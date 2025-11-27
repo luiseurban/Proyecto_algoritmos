@@ -34,7 +34,10 @@
             </label>
 
             <div class="form-actions">
-              <button type="submit" id="runBtn" class="btn primary">Ejecutar benchmark</button>
+              <div class="controls">
+                <button type="submit" id="runBtn" class="btn primary">Ejecutar benchmark</button>
+                <div id="spinner" class="spinner" aria-hidden="true"></div>
+              </div>
             </div>
           </form>
         </section>
@@ -42,6 +45,18 @@
         <section class="card results-card">
           <h3>Resultados</h3>
           <div id="summary" class="summary"></div>
+          <div id="warning" class="warning" style="display:none"></div>
+          <div class="export-actions">
+            <button id="downloadJson" class="btn">Exportar JSON</button>
+            <button id="downloadCsv" class="btn">Exportar CSV</button>
+            <label class="chart-type-label">Tipo de gráfico
+              <select id="chartType" class="input">
+                <option value="bar" selected>Bar (por defecto)</option>
+                <option value="line">Line</option>
+                <option value="horizontal">Bar horizontal</option>
+              </select>
+            </label>
+          </div>
           <div class="chart-wrap"><canvas id="timeChart"></canvas></div>
 
           <h4>Dataset usado</h4>

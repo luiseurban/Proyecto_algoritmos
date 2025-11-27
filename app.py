@@ -8,6 +8,11 @@ from utils import generate_random_strings
 
 app = Flask(__name__)
 
+# Safety limit to avoid running enormous brute-force searches accidentally.
+# If combinations = len(alphabet) ** L exceeds this, brute-force will be skipped
+# unless the client sets `force_bruteforce` to true.
+MAX_BRUTE_COMBINATIONS = 200_000
+
 
 @app.route('/')
 def index():
@@ -30,15 +35,31 @@ def run_bench():
 
     strings = generate_random_strings(n, alphabet, max_len, rng)
 
-    # Brute-force benchmark
+    # Decide whether to run brute-force based on combinations and client intent
+    alphabet_size = max(1, len(alphabet))
+    try:
+        combinations = alphabet_size ** int(L)
+    except OverflowError:
+        combinations = float('inf')
+
+    force_bruteforce = bool(data.get('force_bruteforce', False))
+
     bruteforce_times = []
     bruteforce_res = None
-    for _ in range(repeats):
-        t0 = time.perf_counter()
-        x, cost = median_string_bruteforce(strings, alphabet, L)
-        dt = (time.perf_counter() - t0) * 1000.0
-        bruteforce_times.append(dt)
-        bruteforce_res = {'x': x, 'cost': cost}
+    bruteforce_skipped = False
+    bruteforce_reason = None
+
+    if combinations > MAX_BRUTE_COMBINATIONS and not force_bruteforce:
+        bruteforce_skipped = True
+        bruteforce_reason = f"combinations ({combinations}) exceed limit {MAX_BRUTE_COMBINATIONS}"
+    else:
+        # Brute-force benchmark
+        for _ in range(repeats):
+            t0 = time.perf_counter()
+            x, cost = median_string_bruteforce(strings, alphabet, L)
+            dt = (time.perf_counter() - t0) * 1000.0
+            bruteforce_times.append(dt)
+            bruteforce_res = {'x': x, 'cost': cost}
 
     # Efficient benchmark (local search)
     efficient_times = []
@@ -53,7 +74,13 @@ def run_bench():
 
     return jsonify({
         'strings': strings,
-        'bruteforce': {'times': bruteforce_times, 'result': bruteforce_res},
+        'combinations': combinations,
+        'bruteforce': {
+            'times': bruteforce_times,
+            'result': bruteforce_res,
+            'skipped': bruteforce_skipped,
+            'reason': bruteforce_reason,
+        },
         'efficient': {'times': efficient_times, 'result': efficient_res},
     })
 
