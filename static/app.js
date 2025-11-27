@@ -7,7 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    summary.textContent = 'Ejecutando...';
+    const runBtn = document.getElementById('runBtn');
+    runBtn.disabled = true;
+    const prevBtnText = runBtn.textContent;
+    runBtn.textContent = 'Ejecutando...';
+    summary.textContent = '';
     const payload = {
       n: document.getElementById('n').value,
       max_len: document.getElementById('max_len').value,
@@ -45,5 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
       data: { labels, datasets },
       options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
+
+    runBtn.disabled = false;
+    runBtn.textContent = prevBtnText;
   });
 });
